@@ -4,14 +4,15 @@ variable "region" {
 }
 
 variable "common_prefix" {
-  type = string
+  type    = string
   default = "demo"
 }
 
-locals {
-  common_prefix = "demo"
-  elk_domain    = "${local.common_prefix}-elk-domain"
+variable "elk_domain" {
+  type    = string
+  default = "demo-elk-domain"
 }
+
 
 data "aws_region" "current" {}
 
