@@ -5,5 +5,3 @@ resource "aws_internet_gateway" "main" {
     Name = "${var.common_prefix}-igw"
   }
 }
-
-

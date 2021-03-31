@@ -10,3 +10,8 @@ resource "aws_vpc" "main" {
     Name = "${var.common_prefix}-vpc"
   }
 }
+
+resource "aws_key_pair" "ssh_key" {
+  key_name = "key_hyperion"
+  public_key = file("~/.ssh/id_rsa.pub")
+}
