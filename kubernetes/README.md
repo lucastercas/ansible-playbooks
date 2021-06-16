@@ -28,13 +28,14 @@
 ### Master
 
 1. Adicionar usuário (atualmente tudo roda como `root`)
-2. Adicionar outros ingress
+1. Adicionar outros ingress
    1. [x] Nginx
-   2. [ ] Traefik
-3. Adicionar outras redes
+   1. [ ] Traefik
+1. Adicionar outras redes
    1. [x] Weave
-   2. [x] Flannel
-   3. [ ] Calico
+   1. [x] Flannel
+   1. [ ] Calico
+1. Multiples masters
 
 ### Worker
 
