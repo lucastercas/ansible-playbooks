@@ -6,15 +6,10 @@ servidor_pubkey="{{ wg_pub_key.stdout}}"
 servidor_subnet="10.251.251.0/24"
 servidor_rotas=("10.251.0.0/16")
 
-########################################################
-########################################################
-########################################################
-########################################################
-
 if [[ -z "$2" ]]; then
     echo -e "WGEN v1.0.0 - $servidor_nome"
     echo -e "Uso: $(basename $0) nome_utilizador fim_ip"
-    echo -e "Exemplo: $(basename $0) \"Mayara Alves\" 18"
+    echo -e "Exemplo: $(basename $0) \"Lucas Tercas\" 18"
     exit
 fi
 

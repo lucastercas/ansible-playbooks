@@ -1,5 +1,8 @@
+# Terraform Files
 **/*.env
 **/*.state
 **/*.terraform
 **/*.tfstate
 **/*.tfstate.backup
+
+# Host Files
