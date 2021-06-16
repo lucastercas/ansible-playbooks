@@ -1,0 +1,10 @@
+---
+- name: Initialize with control plane endpoint
+  command: >
+    kubeadm init
+    --control-plane-endpoint "{{ control_plane_endpoint }}:6443"
+    --upload-certs
+    --pod-network-cidr="{{ cluster_networks[selected_network].pod_network_cidr }}"
+    --ignore-preflight-errors="{{ ignore_preflight_errors }}"
+  changed_when: false # To-Do: Como saber se mudou?
+  register: kubeadm_output

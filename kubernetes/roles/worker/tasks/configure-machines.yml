@@ -1,0 +1,57 @@
+---
+- name: Install dependency packages
+  package:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - curl
+    - apt-transport-https
+    - gnupg2
+    - ufw
+    - ca-certificates
+    - gnupg-agent
+    - software-properties-common
+    - nfs-common
+
+- name: Add kubernetes gpg apt key
+  apt_key:
+    url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    state: present
+
+- name: Add kubernetes apt repo
+  apt_repository:
+    repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+
+- name: Install kubernetes packages
+  package:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - kubeadm
+    - kubelet
+
+- name: Remove swap files from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  tags:
+    - swap
+
+- name: Copy docker daemon.json template
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify:
+    - Restart ufw
+    - Restart docker
+    - Restart kubelet

@@ -1,0 +1,20 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: kubernetes-loadbalancer
+  author: lucastercas
+  description: "Ansible role to configure loadbalancer for k8s cluster"
+  company: ""
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  galaxy_tags:
+    - kubernetes
+    - k8s
+    - loadbalancer
+    - haproxy
+    - nginx
+    - containers
+    - docker
+    - server
+    - master

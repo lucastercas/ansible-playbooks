@@ -1,0 +1,56 @@
+---
+- name: Install dependency packages
+  package:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - curl
+    - apt-transport-https
+    - gnupg2
+    - ufw
+    - ca-certificates
+    - gnupg-agent
+    - software-properties-common
+
+- name: Add kubernetes gpg apt key
+  apt_key:
+    url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    state: present
+
+- name: Add kubernetes apt repo
+  apt_repository:
+    repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+
+- name: Install kubernetes packages
+  package:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - kubeadm
+    - kubelet
+    - kubectl
+  notify:
+    - Restart docker
+    - Restart kubelet
+
+- name: Remove swap files from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  changed_when: false # To-Do: Como saber se mudou algo?
+  tags:
+    - swap
+  notify:
+    - Restart ufw
+    - Restart docker
+    - Restart kubelet

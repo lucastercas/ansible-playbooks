@@ -1,0 +1,4 @@
+---
+- name: Apply NGINX ingress controller
+  command: kubectl apply -f {{ nginx_ingress_controller_manifest }}
+  when: nginx_ingress_controller

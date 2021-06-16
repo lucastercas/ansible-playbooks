@@ -1,0 +1,72 @@
+---
+- name: Open INPUT TCP ports
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "6443"
+    - "10250"
+    - "6783"    # weave network
+    - "6784"    # weave network
+    - "8443"
+    - "30000:32767"
+
+- name: Open OUTPUT TCP ports
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "6443"
+    - "10250"
+    - "6783"    # weave network
+    - "6784"    # weave network
+    - "8443"
+    - "30000:32767"
+
+- name: Open INPUT udp ports
+  iptables:
+    chain: INPUT
+    protocol: udp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "6443"
+    - "10250"
+    - "6783"    # weave network
+    - "6784"    # weave network
+    - "8443"
+    - "30000:32767"
+
+- name: Open OUTPUT UDP ports
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "6443"
+    - "10250"
+    - "6783"    # weave network
+    - "6784"    # weave network
+    - "8443"
+    - "30000:32767"

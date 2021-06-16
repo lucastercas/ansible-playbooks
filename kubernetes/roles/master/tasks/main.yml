@@ -1,0 +1,88 @@
+---
+- name: Check if cluster is initialized
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubernetes_init_stat
+  changed_when: false
+
+- name: Configure host
+  include_tasks: configure-machines.yml
+
+- name: Add ufw firewall rules
+  include_tasks: ufw.yml
+
+- name: Initialize kubernetes cluster
+  when: not kubernetes_init_stat.stat.exists
+  block:
+    - name: Pull kubeadm config images
+      command: kubeadm config images pull
+
+    - name: Initialize single master cluster
+      when: cluster_topology == "single_master"
+      include_tasks: single-master.yml
+
+    - name: Initialize stacked etcd cluster
+      when: cluster_topology == "stacked_etcd"
+      include_tasks: stacked-etcd.yml
+
+    - name: Initialize external etcd cluster
+      when: cluster_topology == "external_etcd"
+      include_tasks: external-etcd.yml
+
+    - name: Ensure .kube directory exists
+      file:
+        path: ~/.kube
+        state: directory
+        # owner: kube-user
+        # group: kube-user
+
+    - name: Symlink kubeconfig to ~/.kube/config
+      file:
+        src: /etc/kubernetes/admin.conf
+        dest: ~/.kube/config
+        state: link
+        # owner: kube-user
+        # group: kube-user
+
+    - name: Configure weave cni plugin
+      block:
+        - name: Get kubernetes version for weave installation.
+          shell: kubectl version | base64 | tr -d '\n'
+          changed_when: false
+          register: kubectl_version
+        - name: Install weave network plugin
+          command: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}"
+          register: weave_result
+          changed_when:
+            - "'created' in weave_result.stdout"
+            - "'configured' in weave_result.stdout"
+      when: selected_network == "weave"
+
+    - name: Configure flannel cni plugin
+      command: "{{ item }}"
+      with_items:
+        - kubectl apply -f {{ flannel_manifest_file_rbac }}
+        - kubectl apply -f {{ flannel_manifest_file }}
+      register: flannel_result
+      changed_when: "'created' in flannel_result.stdout"
+      when: selected_network == "flannel"
+
+- name: Taint masters
+  command: kubectl taint nodes --all node-role.kubernetes.io/master-
+  when: taint_masters
+
+- name: Get kubectl join command
+  command: kubeadm token create --print-join-command
+  changed_when: false
+  register: kubectl_worker_join_command_output
+
+- name: Configure nginx ingress
+  include_tasks: ingress.yml
+
+- name: Set the kubectl worker join command on all hosts
+  set_fact:
+    kubectl_worker_join_command: "{{ kubectl_worker_join_command_output.stdout }}"
+  when: kubectl_worker_join_command_output.stdout is defined
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  with_items: "{{ groups['all'] }}"

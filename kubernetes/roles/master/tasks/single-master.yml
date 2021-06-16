@@ -1,0 +1,10 @@
+---
+- name: Initialize single master cluster
+  command: >
+    kubeadm init
+    --apiserver-advertise-address={{ ansible_default_ipv4.address }}
+    --upload-certs
+    --pod-network-cidr="{{ cluster_networks[selected_network].pod_network_cidr }}"
+    --ignore-preflight-errors="{{ ignore_preflight_errors }}"
+  changed_when: false # To-Do: Como saber se mudou?
+  register: kubeadm_output

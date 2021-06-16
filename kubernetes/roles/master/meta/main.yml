@@ -1,0 +1,24 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: kubernetes-master
+  author: lucastercas
+  description: "Ansible role to configure master nodes of k8s cluster"
+  company: ""
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  galaxy_tags:
+    - kubernetes
+    - k8s
+    - containers
+    - docker
+    - server
+    - master
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all

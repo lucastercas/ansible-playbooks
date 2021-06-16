@@ -1,0 +1,84 @@
+---
+- name: Open INPUT TCP ports
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "2376"
+    - "2379"
+    - "2380"
+    - "6783"
+    - "6443"
+    - "9099"
+    - "10250"
+    - "10255"
+    - "8443"
+
+- name: Open OUTPUT TCP ports
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "2376"
+    - "2379"
+    - "2380"
+    - "6783"
+    - "6443"
+    - "9099"
+    - "10250"
+    - "10255"
+    - "8443"
+
+- name: Open INPUT UDP ports
+  iptables:
+    chain: INPUT
+    protocol: udp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "2376"
+    - "2379"
+    - "2380"
+    - "6783"
+    - "6443"
+    - "9099"
+    - "10250"
+    - "10255"
+    - "8443"
+
+- name: Open OUTPUT UDP ports
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
+    action: insert
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "2376"
+    - "2379"
+    - "2380"
+    - "6783"
+    - "6443"
+    - "9099"
+    - "10250"
+    - "10255"
+    - "8443"

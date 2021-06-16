@@ -1,0 +1,20 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: kubernetes-worker
+  author: lucastercas
+  description: "Ansible role to configure kubernetes worker nodes"
+  company: "Pulse"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  galaxy_tags:
+    - kubernetes
+    - worker
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all

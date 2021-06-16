@@ -1,0 +1,16 @@
+---
+- name: Check if cluster is initialized
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubernetes_init_stat
+  changed_when: false
+
+- name: Configure host
+  include_tasks: configure-machines.yml
+
+- name: Configure ufw firewall
+  include_tasks: ufw.yml
+
+- name: Execute join command on workers
+  when: not kubernetes_init_stat.stat.exists
+  command: "{{ kubectl_worker_join_command }}"

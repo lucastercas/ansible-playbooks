@@ -1,7 +1,0 @@
----
-- hosts: all
-  tags: vpn
-  remote_user: admin
-  become: yes
-  roles:
-    - role: wireguard

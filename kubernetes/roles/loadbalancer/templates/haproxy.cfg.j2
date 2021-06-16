@@ -1,0 +1,56 @@
+#{{ ansible_managed }}
+
+global
+  user haproxy
+  group haproxy
+  chroot /var/lib/haproxy
+  log /dev/log local0
+
+defaults
+  mode http
+  log global
+  option httplog
+  retries 2
+  timeout connect 3000ms
+  timeout server 5000ms
+  timeout client 5000ms
+
+frontend front_masters
+  bind *:6443
+  mode tcp
+  option tcplog
+  default_backend back_masters
+
+backend back_masters
+  mode tcp
+  balance roundrobin
+  option tcp-check
+  {% for server in groups.masters %}
+    server {{ server }} {{ hostvars[server].ansible_host }}:6443 check fall 3 rise 2
+  {% endfor %}
+
+frontend ingress_http_front
+  bind *:80
+  mode tcp
+  default_backend ingress_http_back
+
+backend ingress_http_back
+  mode tcp
+  balance roundrobin
+  option tcp-check
+  {% for server in groups.workers %}
+    server {{ server }} {{ hostvars[server].ansible_host }}:{{ ingress_http_port }} check fall 3 rise 2
+  {% endfor %}
+
+frontend ingress_https_front
+  bind *:443
+  mode tcp
+  default_backend ingress_https_back
+
+backend ingress_https_back
+  mode tcp
+  balance roundrobin
+  option tcp-check
+  {% for server in groups.workers %}
+    server {{ server }} {{ hostvars[server].ansible_host }}:{{ ingress_https_port }} check fall 3 rise 2
+  {% endfor %}

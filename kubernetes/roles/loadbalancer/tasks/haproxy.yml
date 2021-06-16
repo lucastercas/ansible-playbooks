@@ -1,0 +1,12 @@
+---
+- name: Install required packages
+  packages:
+    name: haproxy
+    state: present
+
+- name: Move template of haproxy conf file
+  template:
+    src: templates/haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  notify: Restart haproxy
+
