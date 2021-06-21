@@ -5,15 +5,14 @@
   register: kubernetes_init_stat
   changed_when: false
 
-- name: Configure host
-  include_tasks: configure-machines.yml
-
-- name: Add ufw firewall rules
-  include_tasks: ufw.yml
+# - name: Add ufw firewall rules
+#   include_tasks: ufw.yml
 
 - name: Initialize kubernetes cluster
   when: not kubernetes_init_stat.stat.exists
   block:
+    - name: Configure host
+      include_tasks: configure-machines.yml
     - name: Pull kubeadm config images
       command: kubeadm config images pull
 

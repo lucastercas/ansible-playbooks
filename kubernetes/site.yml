@@ -1,0 +1,17 @@
+---
+- name: Configure control plane loadbalancers
+  hosts: cp_lbs
+  tags: loadbalancer
+  remote_user: ubuntu
+  become: true
+  roles:
+    - role: control-plane-lb
+
+- name: Configure master nodes
+  hosts: masters
+  tags: master
+  remote_user: ubuntu
+  become: true
+  roles:
+    - role: common
+    - role: master

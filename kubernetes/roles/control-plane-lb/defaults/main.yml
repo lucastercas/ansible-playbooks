@@ -1,2 +1,7 @@
 ---
 loadbalancer: "haproxy"
+
+stats:
+  username: "lucas.tercas"
+  password: "12341234"
+  port: 1936

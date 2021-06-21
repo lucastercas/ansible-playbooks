@@ -1,11 +1,26 @@
 ---
-- name: Install required packages
-  packages:
+- name: install | Install required packages
+  package:
     name: haproxy
     state: present
 
-- name: Move template of haproxy conf file
+- name: configure | Move template of haproxy conf file
   template:
     src: templates/haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
   notify: Restart haproxy
+
+- name: Start haproxy service
+  service:
+    name: haproxy
+    state: restarted
+    enabled: true
+
+- name: check | Check all port numbers are accessible from the current host
+  wait_for:
+    host: localhost
+    port: "{{ stats.port }}"
+    state: started
+    delay: 0
+    timeout: 3
+  ignore_errors: no

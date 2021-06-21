@@ -1,0 +1,16 @@
+---
+- name: Install haproxy
+  package:
+    name: haproxy
+    state: present
+
+- name: Transfer config template
+  template:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: Start haproxy service
+  service:
+    name: haproxy
+    state: restarted
+    enabled: true

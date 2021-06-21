@@ -1,8 +1,9 @@
 ---
-- name: Restart haproxy
+- name: Start haproxy service
   service:
     name: haproxy
     state: restarted
+    enabled: true
 
 - name: Restart nginx
   service:

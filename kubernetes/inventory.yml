@@ -1,0 +1,15 @@
+---
+all:
+  hosts:
+    cp_lb-01:
+      ansible_host: 54.161.171.47
+    master_01:
+      ansible_host: 107.23.11.10
+
+  children:
+    cp_lbs:
+      hosts:
+        cp_lb-01:
+    masters:
+      hosts:
+        master_01:
