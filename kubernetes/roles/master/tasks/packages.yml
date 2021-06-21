@@ -8,18 +8,16 @@
     - curl
     - apt-transport-https
     - gnupg2
-    - ufw
     - ca-certificates
     - gnupg-agent
     - software-properties-common
-    - nfs-common
 
-- name: Add kubernetes gpg apt key
+- name: configure | Add kubernetes gpg apt key
   apt_key:
     url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
     state: present
 
-- name: Add kubernetes apt repo
+- name: configure | Add kubernetes apt repo
   apt_repository:
     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
@@ -32,6 +30,10 @@
   with_items:
     - kubeadm
     - kubelet
+    - kubectl
+  notify:
+    - Restart docker
+    - Restart kubelet
 
 - name: Remove swap files from /etc/fstab
   mount:
@@ -44,5 +46,10 @@
 
 - name: Disable swap
   command: swapoff -a
+  changed_when: false # To-Do: Como saber se mudou algo?
   tags:
     - swap
+  notify:
+    - Restart ufw
+    - Restart docker
+    - Restart kubelet

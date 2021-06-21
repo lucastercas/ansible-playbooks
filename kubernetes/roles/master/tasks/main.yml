@@ -9,7 +9,8 @@
   when: not kubernetes_init_stat.stat.exists
   block:
     - name: Configure host
-      include_tasks: configure-machines.yml
+      include_tasks: packages.yml
+
     - name: Pull kubeadm config images
       command: kubeadm config images pull
 
@@ -72,8 +73,8 @@
   changed_when: false
   register: kubectl_worker_join_command_output
 
-- name: Configure nginx ingress
-  include_tasks: ingress.yml
+# - name: Configure nginx ingress
+#   include_tasks: ingress.yml
 
 - name: Set the kubectl worker join command on all hosts
   set_fact:

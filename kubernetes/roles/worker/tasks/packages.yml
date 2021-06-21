@@ -12,6 +12,7 @@
     - ca-certificates
     - gnupg-agent
     - software-properties-common
+    - nfs-common
 
 - name: Add kubernetes gpg apt key
   apt_key:
@@ -31,26 +32,3 @@
   with_items:
     - kubeadm
     - kubelet
-    - kubectl
-  notify:
-    - Restart docker
-    - Restart kubelet
-
-- name: Remove swap files from /etc/fstab
-  mount:
-    name: "{{ item }}"
-    fstype: swap
-    state: absent
-  with_items:
-    - swap
-    - none
-
-- name: Disable swap
-  command: swapoff -a
-  changed_when: false # To-Do: Como saber se mudou algo?
-  tags:
-    - swap
-  notify:
-    - Restart ufw
-    - Restart docker
-    - Restart kubelet
