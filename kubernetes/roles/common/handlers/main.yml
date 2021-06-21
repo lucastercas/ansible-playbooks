@@ -4,9 +4,3 @@
     name: docker
     state: restarted
     enabled: yes
-
-- name: Restart kubelet
-  service:
-    name: kubelet
-    state: restarted
-    enabled: yes

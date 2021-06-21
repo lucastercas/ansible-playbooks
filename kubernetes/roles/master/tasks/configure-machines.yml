@@ -1,5 +1,5 @@
 ---
-- name: Install dependency packages
+- name: install | Install dependency packages
   package:
     name: "{{ item }}"
     state: present
@@ -23,7 +23,7 @@
     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
 
-- name: Install kubernetes packages
+- name: install | Install kubernetes packages
   package:
     name: "{{ item }}"
     state: present

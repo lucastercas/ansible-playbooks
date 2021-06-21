@@ -5,6 +5,8 @@ all:
       ansible_host: 54.161.171.47
     master_01:
       ansible_host: 107.23.11.10
+    worker_01:
+      ansible_host: 54.161.171.47
 
   children:
     cp_lbs:
@@ -13,3 +15,7 @@ all:
     masters:
       hosts:
         master_01:
+
+    workers:
+      hosts:
+        worker_01:

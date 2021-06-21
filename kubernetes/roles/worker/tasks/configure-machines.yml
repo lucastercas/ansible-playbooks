@@ -1,5 +1,5 @@
 ---
-- name: Install dependency packages
+- name: install | Install dependency packages
   package:
     name: "{{ item }}"
     state: present
@@ -24,7 +24,7 @@
     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
 
-- name: Install kubernetes packages
+- name: install | Install kubernetes packages
   package:
     name: "{{ item }}"
     state: present
@@ -46,12 +46,3 @@
   command: swapoff -a
   tags:
     - swap
-
-- name: Copy docker daemon.json template
-  template:
-    src: daemon.json.j2
-    dest: /etc/docker/daemon.json
-  notify:
-    - Restart ufw
-    - Restart docker
-    - Restart kubelet

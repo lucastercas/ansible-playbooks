@@ -26,3 +26,10 @@
     - docker-ce
     - docker-ce-cli
     - containerd.io
+
+- name: Copy docker daemon.json template
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify:
+    - Restart docker
