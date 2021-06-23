@@ -1,4 +1,0 @@
----
-- name: Apply metrics server
-  command: kubectl get nodes
-  changed_when: false

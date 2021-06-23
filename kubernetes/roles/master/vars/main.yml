@@ -7,10 +7,12 @@ cluster_networks:
   flannel:
     cni: "flannel"
     pod_network_cidr: "10.244.0.0/16"
+  # To-Do: calico
 
-# Flanned Manifests
+# Flannel Manifests
 flannel_manifest_file_rbac: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml"
 flannel_manifest_file: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 
 # Nginx Ingress Controller
 nginx_ingress_controller_manifest: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/baremetal/deploy.yaml"
+# To-Do: Haproxy ingress

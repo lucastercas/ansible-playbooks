@@ -1,0 +1,2 @@
+---
+- command: kubectl get nodes
