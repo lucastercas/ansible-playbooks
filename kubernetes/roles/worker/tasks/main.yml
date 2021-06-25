@@ -7,20 +7,6 @@
 
 - include_tasks: packages.yml
 
-- name: Remove swap files from /etc/fstab
-  mount:
-    name: "{{ item }}"
-    fstype: swap
-    state: absent
-  with_items:
-    - swap
-    - none
-
-- name: Disable swap
-  command: swapoff -a
-  tags:
-    - swap
-
 - name: configure | Execute join command on workers
   when: not kubernetes_init_stat.stat.exists
   command: "{{ kubectl_worker_join_command.stdout }}"

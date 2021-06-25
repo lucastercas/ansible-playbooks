@@ -29,5 +29,13 @@
       delegate_to: "{{ groups.masters[0] }}"
       # when: kubectl_worker_join_command not defined
   roles:
-  - role: common
-  - role: worker
+    - role: common
+    - role: worker
+
+- name: Apply common manifestos
+  hosts: masters[0]
+  tags: manifestos
+  remote_user: ubuntu
+  become: true
+  roles:
+    - role: manifestos
