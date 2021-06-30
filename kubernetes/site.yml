@@ -27,7 +27,6 @@
       register: kubectl_worker_join_command
       changed_when: false
       delegate_to: "{{ groups.masters[0] }}"
-      # when: kubectl_worker_join_command not defined
   roles:
     - role: common
     - role: worker
@@ -39,3 +38,4 @@
   become: true
   roles:
     - role: manifestos
+
