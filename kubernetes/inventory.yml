@@ -2,11 +2,17 @@
 all:
   hosts:
     cp_lb_01:
-      ansible_host:
+      ansible_host: 3.87.208.139
+
     master_01:
-      ansible_host: 34.239.106.22
+      ansible_host: 34.230.73.29
+    master_02:
+      ansible_host: 54.174.236.204
+
     worker_01:
-      ansible_host: 52.90.189.171
+      ansible_host: 100.27.26.170
+    worker_02:
+      ansible_host: 107.20.119.255
 
   children:
     cp_lbs:
@@ -20,4 +26,5 @@ all:
     workers:
       hosts:
         worker_01:
+        worker_02:
 

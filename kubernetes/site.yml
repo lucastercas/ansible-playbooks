@@ -4,6 +4,12 @@
   tags: loadbalancer
   remote_user: ubuntu
   become: true
+  pre_tasks:
+    - name: Gather facts on masters
+      setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      loop: "{{ groups.masters }}"
   roles:
     - role: control-plane-lb
 
