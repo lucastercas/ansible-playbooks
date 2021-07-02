@@ -16,3 +16,17 @@ flannel_manifest_file: "https://raw.githubusercontent.com/coreos/flannel/master/
 # Nginx Ingress Controller
 nginx_ingress_controller_manifest: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/baremetal/deploy.yaml"
 # To-Do: Haproxy ingress
+
+ports:
+  - "22"
+  - "80"
+  - "443"
+  - "2376"
+  - "2379"
+  - "2380"
+  - "6783"
+  - "6443"
+  - "9099"
+  - "10250"
+  - "10255"
+  - "8443"

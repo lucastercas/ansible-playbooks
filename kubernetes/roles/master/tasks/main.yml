@@ -1,5 +1,5 @@
 ---
-- name: Check if cluster is initialized
+- name: Check if node is in a cluster
   stat:
     path: /etc/kubernetes/admin.conf
   register: kubernetes_init_stat
@@ -8,7 +8,7 @@
 - name: Initialize kubernetes cluster
   when: not kubernetes_init_stat.stat.exists
   block:
-    - name: Configure host
+    - name: Install packages
       include_tasks: packages.yml
 
     - name: Pull kubeadm config images
@@ -68,18 +68,3 @@
   command: kubectl taint nodes --all node-role.kubernetes.io/master-
   when: taint_masters
 
-- name: Get kubectl join command
-  command: kubeadm token create --print-join-command
-  changed_when: false
-  register: kubectl_worker_join_command_output
-
-# - name: Configure nginx ingress
-#   include_tasks: ingress.yml
-
-- name: Set the kubectl worker join command on all hosts
-  set_fact:
-    kubectl_worker_join_command: "{{ kubectl_worker_join_command_output }}"
-  when: kubectl_worker_join_command_output.stdout is defined
-  delegate_to: "{{ item }}"
-  delegate_facts: true
-  with_items: "{{ groups['all'] }}"

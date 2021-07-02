@@ -1,21 +1,34 @@
 ---
 all:
+  vars:
+    cluster_topology: "stacked_etcd"
   hosts:
-    cp_lb-01:
-      ansible_host: 54.197.70.100
+    cp_lb_01:
+      ansible_host: 3.87.208.139
+
     master_01:
-      ansible_host: 34.226.119.243
+      ansible_host: 34.230.73.29
+    master_02:
+      ansible_host: 54.174.236.204
+
     worker_01:
-      ansible_host: 3.82.127.83
+      ansible_host: 107.20.119.255
+    worker_02:
+      ansible_host: 100.27.26.170
+
 
   children:
     cp_lbs:
       hosts:
-        cp_lb-01:
+        cp_lb_01:
+
     masters:
       hosts:
         master_01:
+        master_02:
 
     workers:
       hosts:
         worker_01:
+        worker_02:
+

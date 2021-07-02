@@ -27,6 +27,21 @@
     - docker-ce-cli
     - containerd.io
 
+- name: Remove swap files from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  changed_when: false # To-Do: Como saber se mudou algo?
+  tags:
+    - swap
+
 - name: Restart docker
   service:
     name: docker

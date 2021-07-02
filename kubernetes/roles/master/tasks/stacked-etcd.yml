@@ -1,10 +1,30 @@
 ---
-- name: Initialize with control plane endpoint
-  command: >
-    kubeadm init
-    --control-plane-endpoint "{{ control_plane_endpoint }}:6443"
-    --upload-certs
-    --pod-network-cidr="{{ cluster_networks[selected_network].pod_network_cidr }}"
-    --ignore-preflight-errors="{{ ignore_preflight_errors }}"
-  changed_when: false # To-Do: Como saber se mudou?
-  register: kubeadm_output
+- name: Join first master
+  when: inventory_hostname in groups.masters[0]
+  block:
+    - name: Initialize control plane with first master
+      command: >
+        kubeadm init
+        --control-plane-endpoint "{{ control_plane_endpoint | default(hostvars[groups.cp_lbs[0]].ansible_default_ipv4.address) }}":6443
+        --upload-certs
+        --pod-network-cidr="{{cluster_networks[selected_network].pod_network_cidr}}"
+        --ignore-preflight-errors="{{ignore_preflight_errors}}"
+      changed_when: false # To-Do: Como saber se mudou?
+      register: kubeadm_output
+    - name: Get join command
+      command: kubeadm token create --print-join-command
+      register: join_command
+    - name: Get new certificate key
+      command: kubeadm init phase upload-certs --upload-certs
+      register: certificate_keys
+    - debug:
+        var: join_command
+    - debug:
+        var: certificate_keys
+
+- name: Join rest of the nodes
+  when: inventory_hostname not in groups.masters[0]
+  block:
+    - name: Execute join command
+      command: "{{ hostvars[groups.masters[0]].join_command.stdout }} --control-plane --certificate-key {{ hostvars[groups.masters[0]].certificate_keys.stdout_lines[2] }}"
+

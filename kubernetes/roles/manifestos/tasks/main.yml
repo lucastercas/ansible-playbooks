@@ -1,2 +1,9 @@
 ---
-- command: kubectl get nodes
+- name: Send manifesto file
+  copy:
+    src: test-deployment.yml
+    dest: test-deployment.yml
+
+- name: Apply manifesto
+  command: kubectl create -f test-deployment.yml
+

@@ -22,6 +22,7 @@
     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
 
+# To-Do: lock version
 - name: install | Install kubernetes packages
   package:
     name: "{{ item }}"
@@ -31,25 +32,10 @@
     - kubeadm
     - kubelet
     - kubectl
-  notify:
-    - Restart docker
-    - Restart kubelet
 
-- name: Remove swap files from /etc/fstab
-  mount:
-    name: "{{ item }}"
-    fstype: swap
-    state: absent
-  with_items:
-    - swap
-    - none
+- name: Restart docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
 
-- name: Disable swap
-  command: swapoff -a
-  changed_when: false # To-Do: Como saber se mudou algo?
-  tags:
-    - swap
-  notify:
-    - Restart ufw
-    - Restart docker
-    - Restart kubelet
