@@ -18,6 +18,12 @@
   tags: master
   remote_user: ubuntu
   become: true
+  pre_tasks:
+    - name: Gather facts on loadbalancers
+      setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      loop: "{{ groups.cp_lbs }}"
   roles:
     - role: common
     - role: master
@@ -44,4 +50,17 @@
   become: true
   roles:
     - role: manifestos
+
+- name: Reset cluster
+  hosts: masters,workers
+  tags: reset
+  remote_user: ubuntu
+  become: true
+  tasks:
+    - name: kubeadm reset
+      command: kubeadm reset -f
+    - name: Clean etcd dir
+      command: rm -rf /var/lib/etcd
+    - name: Clean cni
+      command: rm -rf /etc/cni
 

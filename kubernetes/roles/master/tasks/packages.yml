@@ -22,6 +22,7 @@
     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
 
+# To-Do: lock version
 - name: install | Install kubernetes packages
   package:
     name: "{{ item }}"
@@ -37,3 +38,4 @@
     name: docker
     state: restarted
     enabled: yes
+

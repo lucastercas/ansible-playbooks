@@ -1,5 +1,5 @@
 ---
-- name: Check if cluster is initialized
+- name: Check if node is in a cluster
   stat:
     path: /etc/kubernetes/admin.conf
   register: kubernetes_init_stat
