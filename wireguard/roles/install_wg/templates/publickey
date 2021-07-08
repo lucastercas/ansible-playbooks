@@ -1,1 +1,1 @@
-"{{ wg_pub_key.stdout }}"
+{{ wg_pub_key.stdout }}

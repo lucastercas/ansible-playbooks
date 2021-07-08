@@ -5,8 +5,7 @@
   register: kubernetes_init_stat
   changed_when: false
 
-- include_tasks: packages.yml
-
 - name: configure | Execute join command on workers
   when: not kubernetes_init_stat.stat.exists
   command: "{{ kubectl_worker_join_command.stdout }}"
+

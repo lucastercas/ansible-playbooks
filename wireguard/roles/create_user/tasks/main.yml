@@ -1,1 +1,57 @@
 ---
+- name: Register wg public key to variable
+  command: cat /etc/wireguard/publickey
+  register: wg_pub_key
+
+- name: Create clients directory
+  file:
+    state: directory
+    path: /etc/wireguard/clients
+    recurse: true
+
+- name: Check if client already exists
+  lineinfile:
+    path: /etc/wireguard/wg0.conf
+    line: "# Client: lucastercas"
+    state: present
+  register: is_client_present
+  check_mode: yes
+
+- name: Add user
+  when: is_client_present is changed
+  block:
+    - name: Generate private key for client
+      command: wg genkey
+      register: priv_key
+
+    - name: Generate public key for client
+      command: wg pubkey
+      args:
+        stdin: "{{ priv_key.stdout }}"
+      register: pub_key
+
+    - name: Add client to wg0
+      blockinfile:
+        path: /etc/wireguard/wg0.conf
+        block: |
+          # Client: lucastercas
+          [Peer]
+          PublicKey = {{ pub_key.stdout }}
+          # PrivateKey = {{ priv_key.stdout }}
+          AllowedIPs =  10.0.0.2/16
+
+    - name: Create client config file
+      template:
+        src: client_conf.j2
+        dest: /etc/wireguard/clients/lucastercas.conf
+
+    - name: Fetch client file
+      fetch:
+        src: /etc/wireguard/clients/lucastercas.conf
+        dest: confs/lucastercas.conf
+        flat: true
+
+- name: Restart wireguard service
+  service:
+    name: wg-quick@wg0
+    state: restarted

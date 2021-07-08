@@ -8,9 +8,6 @@
 - name: Initialize kubernetes cluster
   when: not kubernetes_init_stat.stat.exists
   block:
-    - name: Install packages
-      include_tasks: packages.yml
-
     - name: Pull kubeadm config images
       command: kubeadm config images pull
 

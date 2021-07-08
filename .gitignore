@@ -6,3 +6,5 @@
 **/*.tfstate.backup
 
 # Host Files
+**/inventory.yml
+

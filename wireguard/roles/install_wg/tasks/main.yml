@@ -1,67 +1,73 @@
 ---
-- name: Instalar wireguard
+- name: install | wireguard
   apt:
     name:
       - wireguard
       - wireguard-dkms
-      - linux-image-amd64
-      - linux-headers-amd64
     state: present
+    update_cache: yes
 
 - name: Check if wg0.conf file exists
   stat:
-    path: "/etc/wireguard/wg0.conf"
+    path: /etc/wireguard/wg0.conf
   register: wireguard__register_config_file
 
 - name: Create/copy files if no wg0.conf
+  when: not wireguard__register_config_file.stat.exists
   block:
     - name: Create private key
       command: wg genkey
-      changed_when: false
       register: wg_priv_key
+
     - name: Create public key using private key
       command: wg pubkey
       args:
         stdin: "{{ wg_priv_key.stdout }}"
       register: wg_pub_key
+
     - name: Copy private key to /etc/wireguard/privatekey
       template:
         src: privatekey
         dest: /etc/wireguard/privatekey
+
     - name: Copy public key to /etc/wireguard/publickey
       template:
         src: publickey
         dest: /etc/wireguard/publickey
-    - name: Create wg0.conf file
-      template:
-        src: wg0.conf
-        dest: /etc/wireguard/wg0.conf
-  when: not wireguard__register_config_file.stat.exists
+
+    - name: Enable wireguard kernel module
+      modprobe:
+        name: wireguard
+        state: present
+      register: wireguard__register_module_enabled
+      until: wireguard__register_module_enabled is succeeded
+      retries: 10
+      delay: 10
+      failed_when: wireguard__register_module_enabled is failure
 
 - name: Update files
-  block:
-    - name: Copiar chave privada para variavel
-      slurp:
-        src: /etc/wireguard/privatekey
-      register: wg_priv_key
-    - name: Copiar chave publica para variavel
-      slurp:
-        src: /etc/wireguard/publickey
-      register: wg_pub_key
   when: wireguard__register_config_file.stat.exists
+  block:
+    - name: Stop wireguard service
+      service:
+        name: wg-quick@wg0
+        state: stopped
 
-- name: Enable wireguard kernel module
-  modprobe:
-    name: wireguard
-    state: present
-  register: wireguard__register_module_enabled
-  until: wireguard__register_module_enabled is succeeded
-  retries: 10
-  delay: 10
-  failed_when: wireguard__register_module_enabled is failure
+- name: Register private key to variable
+  command: cat /etc/wireguard/privatekey
+  register: wg_priv_key
+
+- name: Register public key to variable
+  command: cat /etc/wireguard/publickey
+  register: wg_pub_key
+
+- name: Update wg0.conf file
+  template:
+    src: wg0.conf
+    dest: /etc/wireguard/wg0.conf
 
 - name: Start and enable wireguard service
   service:
-    name: "wg-quick@wg0"
+    name: wg-quick@wg0
     state: started
     enabled: yes

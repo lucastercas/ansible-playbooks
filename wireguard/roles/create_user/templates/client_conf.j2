@@ -1,0 +1,13 @@
+#{{ ansible_managed }}
+# Client: lucastercas
+
+[Interface]
+# PublicKey = {{ pub_key.stdout }}
+PrivateKey = {{ priv_key.stdout }}
+Address = 10.0.0.2/16
+
+[Peer]
+PersistentKeepalive = 25
+PublicKey = {{ wg_pub_key.stdout }}
+Endpoint =  {{ hostvars[groups.wireguard[0]].ansible_host }}:{{ wg_port }}
+AllowedIPs = 10.0.0.0/16

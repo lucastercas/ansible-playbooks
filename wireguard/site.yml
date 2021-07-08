@@ -1,0 +1,22 @@
+---
+- name: Configure wireguard
+  hosts: wireguard
+  tags: install
+  remote_user: "{{ remote_user }}"
+  become: true
+  roles:
+    - role: install_wg
+
+- name: Create access for users
+  hosts: wireguard
+  tags: user
+  remote_user: "{{ remote_user }}"
+  become: true
+  pre_tasks:
+    - name: Get facts from wireguard server
+      setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      loop: "{{ groups.wireguard }}"
+  roles:
+    - role: create_user

@@ -43,7 +43,7 @@
     - role: common
     - role: worker
 
-- name: Apply common manifestos
+- name: Apply default manifestos
   hosts: masters[0]
   tags: manifestos
   remote_user: ubuntu
@@ -53,7 +53,9 @@
 
 - name: Reset cluster
   hosts: masters,workers
-  tags: reset
+  tags: 
+    - reset
+    - never
   remote_user: ubuntu
   become: true
   tasks:
