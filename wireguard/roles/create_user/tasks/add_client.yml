@@ -1,0 +1,43 @@
+---
+- name: Check if client {{ client }} already exists
+  lineinfile:
+    path: /etc/wireguard/wg0.conf
+    line: "# Client: {{ client }}"
+    state: present
+  register: is_client_present
+  check_mode: yes
+
+- name: "Add client {{ client }}"
+  when: is_client_present is changed
+  block:
+    - name: Generate private key for client
+      command: wg genkey
+      register: priv_key
+
+    - name: Generate public key for client
+      command: wg pubkey
+      args:
+        stdin: "{{ priv_key.stdout }}"
+      register: pub_key
+
+    - name: Add client to wg0
+      blockinfile:
+        path: /etc/wireguard/wg0.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ client }}"
+        block: |
+          # Client: {{ client }}
+          [Peer]
+          PublicKey = {{ pub_key.stdout }}
+          # PrivateKey = {{ priv_key.stdout }}
+          AllowedIPs =  10.0.0.2/16
+
+    - name: Create client config file
+      template:
+        src: client_conf.j2
+        dest: /etc/wireguard/clients/{{ client }}.conf
+
+    - name: Fetch client file
+      fetch:
+        src: /etc/wireguard/clients/{{ client }}.conf
+        dest: confs/{{ client }}.conf
+        flat: true
