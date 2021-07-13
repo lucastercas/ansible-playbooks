@@ -1,0 +1,40 @@
+---
+- name: Install common packages
+  hosts: all
+  become: true
+  remote_user: ubuntu
+  tags: common
+  roles:
+    - role: common
+
+- name: Configure consul
+  hosts: consul
+  become: true
+  remote_user: ubuntu
+  tags: consul
+  roles:
+    - role: consul
+
+- name: Configure servers
+  hosts: servers
+  become: true
+  remote_user: ubuntu
+  tags: server
+  roles:
+    - role: nomad
+
+- name: Configure clients
+  hosts: clients
+  become: true
+  remote_user: ubuntu
+  tags: client
+  roles:
+    - role: nomad
+
+- name: Apply jobs
+  hosts: servers[0]
+  become: true
+  remote_user: ubuntu
+  tags: jobs
+  roles:
+    - role: jobs

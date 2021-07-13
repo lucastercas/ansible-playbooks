@@ -1,0 +1,9 @@
+---
+- name: Pihole
+  block:
+    - name: Copy pihole job definition
+      template:
+        src: pihole.nomad
+        dest: /etc/nomad/jobs/pihole.nomad
+    - name: Run job
+      command: nomad job run /etc/nomad/jobs/pihole.nomad

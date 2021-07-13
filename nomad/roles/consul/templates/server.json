@@ -1,0 +1,22 @@
+{
+  "bootstrap": true,
+  "server": true,
+  "datacenter": "dc1",
+  "data_dir": "/etc/consul/data",
+  "log_level": "DEBUG",
+  "enable_syslog": true,
+  "bind_addr": "127.0.0.1",
+  "advertise_addr": "192.168.0.30",
+  "bootstrap_expect": 1,
+  "node_name": "rp30",
+  "ui": true,
+  "addresses": {
+    "http": "0.0.0.0"
+  },
+  "connect": {
+    "enabled": true
+  },
+  "telemetry": {
+    "statsite_address": "127.0.0.1:2180"
+  }
+}

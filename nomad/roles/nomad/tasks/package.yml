@@ -1,0 +1,31 @@
+---
+# To-Do: checksum
+# To-Do: Check if nomad is present on system
+- name: Install nomad package
+  block:
+    - name: Make directory temp directory
+      file:
+        state: directory
+        path: /tmp/nomad
+        recurse: true
+    - name: Download nomad zip
+      get_url:
+        url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_{{ nomad_architecture }}.zip"
+        dest: "/tmp/nomad/nomad_{{ nomad_version }}_{{ nomad_architecture }}.zip"
+        timeout: 60
+    - name: Unarchive nomad
+      unarchive:
+        src: "/tmp/nomad/nomad_{{ nomad_version }}_{{ nomad_architecture }}.zip"
+        dest: "/tmp/nomad/"
+        creates: "/tmp/nomad/nomad"
+        remote_src: true
+    - name: install | Install Nomad
+      copy:
+        src: /tmp/nomad/nomad
+        dest: /usr/local/bin/
+        mode: 0755
+        remote_src: true
+    - name: cleanup | Cleanup
+      file:
+        path: "/tmp/nomad"
+        state: absent

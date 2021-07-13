@@ -1,0 +1,26 @@
+---
+- name: Make directory temp directory
+  file:
+    state: directory
+    path: /tmp/consul
+    recurse: true
+
+- name: Download consul binary
+  get_url:
+    url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_{{ consul_architecture }}.zip"
+    dest: "/tmp/consul/consul_{{ consul_version }}_linux_{{ consul_architecture }}.zip"
+    timeout: 60
+
+- name: unarchive binary
+  unarchive:
+    src: "/tmp/consul/consul_{{ consul_version }}_linux_{{ consul_architecture }}.zip"
+    dest: /tmp/consul/
+    creates: /tmp/consul/consul
+    remote_src: true
+
+- name: Install consul
+  copy:
+    src: /tmp/consul/consul
+    dest: /usr/local/bin/
+    mode: 0755
+    remote_src: true

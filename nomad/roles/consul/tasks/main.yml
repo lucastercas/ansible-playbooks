@@ -1,0 +1,50 @@
+---
+- include_tasks: package.yml
+
+- name: Create consul group
+  group:
+    name: consul
+    state: present
+
+- name: Create consul user
+  user:
+    name: consul
+    state: present
+    groups:
+      - consul
+
+- name: Create consul directories
+  file:
+    state: directory
+    path: "{{ item }}"
+    recurse: yes
+    owner: consul
+    group: consul
+    mode: 0755
+  loop:
+    - /etc/consul/conf
+    - /etc/consul/consul.d
+    - /etc/consul/data
+
+- name: Copy consul service file
+  template:
+    src: consul.service
+    dest: /etc/systemd/system/consul.service
+    owner: consul
+    group: consul
+    mode: 0755
+
+- name: Copy consul config file
+  template:
+    src: server.json
+    dest: /etc/consul/consul.d/server.json
+    owner: consul
+    group: consul
+    mode: 0755
+
+- name: Start service, and reload systemd
+  systemd:
+    state: restarted
+    daemon_reload: true
+    name: consul
+    enabled: true

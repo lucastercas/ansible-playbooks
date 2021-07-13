@@ -1,0 +1,59 @@
+---
+- include_tasks: package.yml
+
+- name: Configure users
+  block:
+    - name: Create nomad group
+      group:
+        name: nomad
+        state: present
+    - name: Create nomad user
+      user:
+        name: nomad
+        shell: /bin/bash
+        groups:
+          - docker
+          - nomad
+
+- name: Make directory data directory
+  file:
+    state: directory
+    path: "{{ item }}"
+    recurse: true
+    owner: nomad
+    group: nomad
+  loop:
+    - /etc/nomad
+    - /etc/nomad/conf
+    - /etc/nomad/data
+    - /etc/nomad/jobs
+    - /etc/nomad/nomad.d
+
+- name: Copy service file
+  template:
+    src: nomad.service
+    dest: /etc/systemd/system/nomad.service
+
+- name: Copy server config
+  template:
+    src: server.hcl
+    dest: /etc/nomad/nomad.d/server.hcl
+    owner: nomad
+    group: nomad
+    mode: 0755
+  when: inventory_hostname in groups.servers
+
+- name: Copy client config
+  template:
+    src: client.hcl
+    dest: /etc/nomad/nomad.d/client.hcl
+    owner: nomad
+    group: nomad
+    mode: 0755
+  when: inventory_hostname in groups.clients
+
+- name: Start nomad service
+  service:
+    name: nomad
+    enabled: true
+    state: restarted
