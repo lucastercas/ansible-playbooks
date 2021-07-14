@@ -1,4 +1,4 @@
-job "pihole_no_volume" {
+job "pihole" {
 	region = "global"
 	datacenters = ["dc1"]
 	type = "service"
@@ -10,33 +10,56 @@ job "pihole_no_volume" {
 	group "svc" {
 		count = 1
 		restart {
-			interval = "5m"
 			attempts = 5
+			interval = "5m"
 			delay    = "15s"
+      mode     = "fail"
 		}
 		network {
 			port "dns" { static = 53 }
-			port "http" { to = 80}
+			port "http" {
+				to = 80
+				static = 20080
+			}
 		}
 		task "app" {
 			driver = "docker"
 			config {
-				network_mode = "bridge"
 				image = "pihole/pihole:v5.8.1"
 				ports = [ "dns", "http"]
 				cap_add = ["NET_ADMIN"]
+				mount {
+					type = "bind"
+					target = "/etc/pihole/"
+					source = "/etc/nomad/data/pihole/pihole/"
+					readonly = false
+				}
+				mount {
+					type = "bind"
+					target = "/etc/dnsmasq.d/"
+					source = "/etc/nomad/data/pihole/dnsmasq.d/"
+					readonly = false
+				}
 			}
 			env = {
 				"TZ" = "America/Belem"
-				"WEBPASSWORD" = "lucas123"
+				"WEBPASSWORD" = "lucas12345"
 			}
 			resources {
-				cpu    = 200
+				cpu    = 100
 				memory = 128
 			}
 			service {
-				name = "pihole-gui"
+				name = "pihole-web"
+				tags = ["urlprefix-/admin"]
 				port = "http"
+				check {
+					name = "http port alive"
+					type = "http"
+					path = "/"
+					interval = "10s"
+					timeout = "2s"
+				}
 			}
 		}
 
