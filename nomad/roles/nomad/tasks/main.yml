@@ -26,6 +26,7 @@
     - /etc/nomad
     - /etc/nomad/conf
     - /etc/nomad/data
+    - /etc/nomad/data/pihole
     - /etc/nomad/jobs
     - /etc/nomad/nomad.d
 
@@ -33,6 +34,17 @@
   template:
     src: nomad.service
     dest: /etc/systemd/system/nomad.service
+    owner: nomad
+    group: nomad
+    mode: 0755
+
+- name: Copy base config
+  template:
+    src: base.hcl
+    dest: /etc/nomad/nomad.d/base.hcl
+    owner: nomad
+    group: nomad
+    mode: 0755
 
 - name: Copy server config
   template:

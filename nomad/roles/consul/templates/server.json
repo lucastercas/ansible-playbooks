@@ -5,7 +5,7 @@
   "data_dir": "/etc/consul/data",
   "log_level": "DEBUG",
   "enable_syslog": true,
-  "bind_addr": "127.0.0.1",
+  "bind_addr": "0.0.0.0",
   "advertise_addr": "192.168.0.30",
   "bootstrap_expect": 1,
   "node_name": "rp30",
@@ -18,5 +18,8 @@
   },
   "telemetry": {
     "statsite_address": "127.0.0.1:2180"
+  },
+  "acl": {
+    "enabled": false
   }
 }
