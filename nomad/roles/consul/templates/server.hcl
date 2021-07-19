@@ -17,8 +17,8 @@ retry_join = [
 	"192.168.0.30"
 ]
 
-bind_addr = "0.0.0.0"
-advertise_addr = "192.168.0.30"
+bind_addr = "{{ hostvars[inventory_hostname].ansible_host }}"
+advertise_addr = "{{ hostvars[inventory_hostname].ansible_host }}"
 client_addr = "0.0.0.0"
 ports {
 	http = 8500

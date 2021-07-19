@@ -1,7 +1,7 @@
 job "alertmanager" {
+	region = "global"
   datacenters = ["dc1"]
   type = "service"
-
   group "alerting" {
     count = 1
     restart {
@@ -16,10 +16,6 @@ job "alertmanager" {
 				static = 23455
 			}
 		}
-    ephemeral_disk {
-      size = 300
-    }
-
     task "alertmanager" {
       driver = "docker"
       config {
@@ -48,3 +44,4 @@ job "alertmanager" {
     }
   }
 }
+

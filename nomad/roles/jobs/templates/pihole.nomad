@@ -3,11 +3,11 @@ job "pihole" {
 	datacenters = ["dc1"]
 	type = "service"
 	update {
-		stagger = "10s"
 		max_parallel = 1
+		stagger = "10s"
+		auto_revert = true
 	}
-
-	group "dns" {
+	group "pihole" {
 		count = 1
 		restart {
 			attempts = 5
@@ -17,9 +17,22 @@ job "pihole" {
 		}
 		network {
 			port "dns" { static = 53 }
-			port "http" {
-				to = 80
-				static = 20080
+			port "http" { to = 80 }
+		}
+		service {
+			name = "pihole-web"
+			tags = [
+				"dns",
+				"traefik.enable=true",
+				"traefik.http.routers.pihole.rule=PathPrefix(`/admin`)",
+			]
+			port = "http"
+			check {
+				name = "Pihole healthcheck"
+				type = "http"
+				path = "/"
+				interval = "10s"
+				timeout = "2s"
 			}
 		}
 		task "pihole" {
@@ -50,18 +63,7 @@ job "pihole" {
 				cpu    = 100
 				memory = 128
 			}
-			service {
-				name = "pihole-web"
-				tags = ["urlprefix-/admin"]
-				port = "http"
-				check {
-					name = "http port alive"
-					type = "http"
-					path = "/"
-					interval = "10s"
-					timeout = "2s"
-				}
-			}
 		}
 	}
 }
+

@@ -2,7 +2,11 @@ job "prometheus" {
 	region = "global"
   datacenters = ["dc1"]
   type        = "service"
-
+	update {
+		max_parallel = 1
+		stagger = "10s"
+		auto_revert = true
+	}
   group "monitoring" {
     count = 1
     restart {
@@ -12,13 +16,23 @@ job "prometheus" {
       mode     = "fail"
     }
 		network {
-			port  "prometheus_ui" {
-				to = 9090
-				static = 27400
-			}
+			port  "prometheus_ui" { to = 9090 }
 		}
-    ephemeral_disk {
-      size = 300
+    service {
+      name = "prometheus"
+      port = "prometheus_ui"
+      tags = [
+        "metrics", "monitoring",
+        "traefik.enable=true",
+        "traefik.http.routers.prometheus.rule=PathPrefix(`/prometheus`)"
+      ]
+      check {
+        name     = "Prometheus healthcheck"
+        type     = "http"
+        path     = "/prometheus/-/healthy"
+        interval = "10s"
+        timeout  = "2s"
+      }
     }
     task "prometheus" {
       driver = "docker"
@@ -47,21 +61,6 @@ job "prometheus" {
 				cpu = 50
 				memory = 128
 			}
-      service {
-        name = "prometheus"
-        tags = [
-          "metrics", "monitoring",
-          "traefik.enable=true", "traefik.http.routers.prometheus.rule=Path(`/prometheus`)"
-        ]
-        port = "prometheus_ui"
-        check {
-          name     = "Prometheus healthcheck"
-          type     = "http"
-          path     = "/prometheus/-/healthy"
-          interval = "10s"
-          timeout  = "2s"
-        }
-      }
       template {
         change_mode = "noop"
         destination = "local/webserver_alert.yml"
