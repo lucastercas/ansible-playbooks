@@ -1,0 +1,36 @@
+---
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+alerting:
+  alertmanagers:
+    - consul_sd_configs:
+        - server: '192.168.0.30:8500'
+          services: ["alertmanager"]
+rule_files:
+  - "/local/alerts.yml"
+scrape_configs:
+  - job_name: "alertmanager"
+    consul_sd_configs:
+      - server: "192.168.0.30:8500"
+        services: ["alertmanager"]
+  - job_name: "node-exporter"
+    consul_sd_configs:
+      - server: "192.168.0.30:8500"
+        services: ["node-exporter"]
+  - job_name: "nomad_metrics"
+    scrape_interval: 5s
+    metrics_path: /v1/metrics
+    consul_sd_configs:
+      - server: "192.168.0.30:8500"
+        services: ["nomad-client", "nomad"]
+    relabel_configs:
+      - source_labels: ["__meta_consul_tags"]
+        regex: "(.*)http(.*)"
+        action: keep
+    params:
+      format: ["prometheus"]
+  - job_name: "pihole"
+    consul_sd_configs:
+      - server: '192.168.0.30:8500'
+        services: ["pihole-web"]

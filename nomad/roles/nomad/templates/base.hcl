@@ -1,4 +1,4 @@
-name = "{{ inventory_hostname }}"
+name = "nomad-{{ inventory_hostname }}"
 region = "global"
 datacenter = "dc1"
 
@@ -35,7 +35,7 @@ acl {
 }
 
 telemetry {
-  collection_interval = "1s"
+  collection_interval = "5s"
   disable_hostname = true
   prometheus_metrics = true
   publish_allocation_metrics = true
@@ -46,6 +46,7 @@ plugin "docker" {
 	config {
 		allow_privileged = true
 		allow_caps = ["ALL"]
+    extra_labels = ["job_name", "task_group_name", "task_name", "namespace", "node_name"]
     volumes {
       enabled = true
     }

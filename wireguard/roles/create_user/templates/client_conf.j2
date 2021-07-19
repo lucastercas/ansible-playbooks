@@ -4,7 +4,7 @@
 [Interface]
 # PublicKey = {{ pub_key.stdout }}
 PrivateKey = {{ priv_key.stdout }}
-Address = 10.0.0.2/16
+Address = 10.0.0.{{ client_idx + 2}}/16
 
 [Peer]
 PersistentKeepalive = 25

@@ -1,0 +1,11 @@
+---
+groups:
+  - name: prometheus_alerts
+    rules:
+      - alert: Webserver down
+        expr: absent(up{job="webserver"})
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          description: "Our webserver is down."

@@ -1,24 +1,55 @@
 ---
-- name: Pihole
-  block:
-    - name: Copy pihole job definition
-      template:
-        src: pihole.nomad
-        dest: /etc/nomad/jobs/pihole.nomad
-        owner: nomad
-        group: nomad
-        mode: 0755
-    - name: Run job
-      command: nomad job run -detach -address=http://192.168.0.30:4646 /etc/nomad/jobs/pihole.nomad
+# - name: Pihole
+#   block:
+#     - name: Copy pihole job definition
+#       template:
+#         src: pihole.nomad
+#         dest: /etc/nomad/jobs/pihole.nomad
+#         owner: nomad
+#         group: nomad
+#         mode: 0755
+#     - name: Run job
+#       command: nomad job run -detach -address=http://192.168.0.30:4646 /etc/nomad/jobs/pihole.nomad
 
-- name: Fabio
+# - name: Fabio
+#   tags: fabio
+#   block:
+#     - name: Copy fabio job definition
+#       template:
+#         src: fabio.nomad
+#         dest: /etc/nomad/jobs/fabio.nomad
+#         owner: nomad
+#         group: nomad
+#         mode: 0755
+#     - name: Run job
+#       command: nomad job run -detach -address=http://192.168.0.30:4646 /etc/nomad/jobs/fabio.nomad
+
+- name: Prometheus
+  tags: prometheus
   block:
-    - name: Copy fabio job definition
+    - name: Copy prometheus job definition
       template:
-        src: fabio.nomad
-        dest: /etc/nomad/jobs/fabio.nomad
+        src: monitoring/prometheus.nomad
+        dest: /etc/nomad/jobs/prometheus.nomad
         owner: nomad
         group: nomad
         mode: 0755
+    - name: Create prometheus data dir
+      file:
+        path: /etc/nomad/data/prometheus
+        state: directory
+        owner: nomad
+        group: nomad
+        mode: 0755
+    - name: Copy prometheus config files
+      template:
+        src: "monitoring/prometheus/{{ item }}"
+        dest: "/etc/nomad/data/prometheus/{{ item }}"
+        owner: nomad
+        group: nomad
+        mode: 0755
+      loop:
+        - prometheus.yml
+        - alerts.yml
     - name: Run job
-      command: nomad job run -detach -address=http://192.168.0.30:4646 /etc/nomad/jobs/fabio.nomad
+      command: nomad job run -detach -address=http://192.168.0.30:4646 /etc/nomad/jobs/prometheus.nomad

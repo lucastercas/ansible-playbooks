@@ -29,7 +29,7 @@
           [Peer]
           PublicKey = {{ pub_key.stdout }}
           # PrivateKey = {{ priv_key.stdout }}
-          AllowedIPs =  10.0.0.2/16
+          AllowedIPs =  10.0.0.{{ client_idx + 2}}/16
 
     - name: Create client config file
       template:

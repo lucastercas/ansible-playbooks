@@ -9,11 +9,12 @@
     path: /etc/wireguard/clients
     recurse: true
 
-- name: add clients
+- name: Add clients
   include_tasks: add_client.yml
   loop: "{{ clients }}"
   loop_control:
     loop_var: client
+    index_var: client_idx
 
 - name: Restart wireguard service
   service:

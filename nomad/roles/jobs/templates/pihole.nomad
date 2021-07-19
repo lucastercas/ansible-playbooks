@@ -7,7 +7,7 @@ job "pihole" {
 		max_parallel = 1
 	}
 
-	group "svc" {
+	group "dns" {
 		count = 1
 		restart {
 			attempts = 5
@@ -22,10 +22,11 @@ job "pihole" {
 				static = 20080
 			}
 		}
-		task "app" {
+		task "pihole" {
 			driver = "docker"
 			config {
 				image = "pihole/pihole:v5.8.1"
+				force_pull = true
 				ports = [ "dns", "http"]
 				cap_add = ["NET_ADMIN"]
 				mount {
@@ -62,7 +63,5 @@ job "pihole" {
 				}
 			}
 		}
-
 	}
-
 }

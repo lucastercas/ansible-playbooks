@@ -36,8 +36,8 @@
 
 - name: Copy consul config file
   template:
-    src: server.json
-    dest: /etc/consul/consul.d/server.json
+    src: server.hcl
+    dest: /etc/consul/consul.d/server.hcl
     owner: consul
     group: consul
     mode: 0755

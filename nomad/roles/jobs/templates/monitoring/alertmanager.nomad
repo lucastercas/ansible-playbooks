@@ -26,12 +26,19 @@ job "alertmanager" {
         image = "prom/alertmanager:latest"
 				ports = ["alertmanager_ui"]
       }
+			resources {
+				cpu = 100
+				memory = 128
+			}
       service {
         name = "alertmanager"
-        tags = ["urlprefix-/alertmanager strip=/alertmanager"]
+        tags = [
+          "monitoring", "alerts",
+          "traefik.enable=true", "traefik.http.routers.alertmanager.rule=Path(`/alertmanager`)"
+        ]
         port = "alertmanager_ui"
         check {
-          name     = "alertmanager_ui port alive"
+          name     = "Alertmanager healthcheck"
           type     = "http"
           path     = "/-/healthy"
           interval = "10s"
