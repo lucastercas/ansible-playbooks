@@ -16,7 +16,10 @@ job "pihole" {
       mode     = "fail"
 		}
 		network {
-			port "dns" { static = 53 }
+			port "dns" {
+        to = 53
+        static = 53
+      }
 			port "http" { to = 80 }
 		}
 		service {
@@ -66,4 +69,3 @@ job "pihole" {
 		}
 	}
 }
-

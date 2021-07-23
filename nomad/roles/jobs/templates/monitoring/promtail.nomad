@@ -2,14 +2,26 @@ job "promtail" {
 	region = "global"
   datacenters = ["dc1"]
   type        = "service"
-
 	group "promtail" {
 		count = 1
 		network {
-			port "promtail" {
-				to = 3000
-			}
+			port "promtail" { to = 3000 }
+      port "http" { to = 9080}
 		}
+    service {
+      name = "promtail"
+      port = "http"
+      tags = [
+        "monitoring", "logs"
+      ]
+      check {
+        name = "Promtail healthcheck"
+        type = "http"
+        path = "/ready"
+        interval = "10s"
+        timeout = "2s"
+      }
+    }
 		task "promtail" {
 			driver = "docker"
 			config {
@@ -22,22 +34,12 @@ job "promtail" {
 				volumes = [
 					"/var/log/journal/:/var/log/journal",
 					"/run/log/journal/:/run/log/journal",
-					"/etc/machine-id:/etc/machine-i",
+					"/etc/machine-id:/etc/machine-id",
 				]
 			}
 			resources {
 				cpu = 50
 				memory = 64
-			}
-			service {
-				name = "promtail"
-				port = "promtail"
-				check {
-					type = "http"
-					path = "/health"
-					interval = "10s"
-					timeout = "2s"
-				}
 			}
       template {
         data = <<EOH
@@ -47,7 +49,7 @@ server:
 positions:
   filename: /tmp/positions.yaml
 clients:
-  - url: http://192.168.0.31:25410/loki/api/v1/push
+  - url: http://192.168.0.31/loki/loki/api/v1/push
 scrape_configs:
   - job_name: system
     static_configs:

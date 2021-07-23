@@ -15,10 +15,7 @@ job "grafana" {
 			mode = "delay"
 		}
 		network {
-			port "grafana_ui" {
-				to = 3000
-				static = 25400
-			}
+			port "grafana_ui" { to = 3000 }
 		}
 		service {
 			name = "grafana"

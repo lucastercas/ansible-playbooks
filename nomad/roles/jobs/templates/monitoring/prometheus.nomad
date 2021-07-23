@@ -59,7 +59,7 @@ job "prometheus" {
       }
 			resources {
 				cpu = 50
-				memory = 128
+				memory = 256
 			}
       template {
         change_mode = "noop"

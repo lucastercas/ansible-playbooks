@@ -1,7 +1,7 @@
 job "node-exporter" {
 	region = "global"
 	datacenters = ["dc1"]
-	type = "service"
+	type = "system"
 
 	group "monitoring" {
 		count = 1
@@ -13,6 +13,18 @@ job "node-exporter" {
 		network {
 			port "http" { to = 9100}
 		}
+    service {
+      name = "node-exporter"
+      tags = ["metrics", "monitoring"]
+      port = "http"
+      check {
+        name = "Node Exporter healthcheck"
+        type = "http"
+        path = "/metrics"
+        interval = "10s"
+        timeout = "2s"
+      }
+    }
 		task "node-exporter" {
 			driver = "docker"
 			config {
@@ -35,20 +47,6 @@ job "node-exporter" {
 				cpu = 50
 				memory = 100
 			}
-			service {
-				name = "node-exporter"
-				// address_mode = "driver"
-				tags = ["metrics", "monitoring"]
-				port = "http"
-				check {
-					name = "node-exporter is alive"
-          type = "http"
-          path = "/metrics"
-          interval = "10s"
-          timeout = "2s"
-        }
-			}
 		}
 	}
-
 }

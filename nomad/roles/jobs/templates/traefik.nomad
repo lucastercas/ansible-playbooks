@@ -15,10 +15,14 @@ job "traefik" {
       port "traefik" { static = 8081 }
     }
     service {
+      name = "traefik-admin"
+      port = "traefik"
+    }
+    service {
       name = "traefik"
       port = "http"
       tags = [
-      "traefik.enable=true"
+        "traefik.enable=true"
       ]
       check {
         name = "Traefik healthcheck"
@@ -58,16 +62,19 @@ metrics:
     entryPoint: "traefik"
 log:
   level: "DEBUG"
-  format = "json"
 api:
-    dashboard: true
-    insecure: true
+  dashboard: true
+  insecure: true
 providers:
   consulCatalog:
     prefix: "traefik"
     exposedByDefault: false
     endpoint:
       address: "http://192.168.0.30:8500"
+  consul:
+    rootKey: "traefik"
+    endpoints:
+      - "192.168.0.30:8500"
 EOH
       }
     }
